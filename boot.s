@@ -1,5 +1,3 @@
-bits 32
-
 MBALIGN  equ  1 << 0            ; align loaded modules on page boundaries
 MEMINFO  equ  1 << 1            ; provide memory map
 MBFLAGS  equ  MBALIGN | MEMINFO ; this is the Multiboot 'flag' field
@@ -8,16 +6,16 @@ CHECKSUM equ -(MAGIC + MBFLAGS) ; checksum of above, to prove we are multiboot
                                 ; CHECKSUM + MAGIC + MBFLAGS should be Zero (0)
 
 section .multiboot
-align 4
+    align 4
 	dd MAGIC
 	dd MBFLAGS
 	dd CHECKSUM
 
 section .bss
-align 16
-stack_bottom:
-resb 16384
-stack_top:
+    align 16
+    stack_bottom:
+    resb 16384
+    stack_top:
 
 section .text
 global _start: function (_start.end - _start)
