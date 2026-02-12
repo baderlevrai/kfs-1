@@ -16,24 +16,17 @@ build: $(BOOT_OBJ) $(KERNEL_OBJS)
 
 $(BOOT_OBJ): $(BOOT_FILE)
 	@nasm -f elf32 boot.s -o boot.o
-# 	ld -m elf_i386 -o boot.bin --oformat binary -e init boot.o
 
 $(KERNEL_OBJS):
 	@$(CC) -m32 $(CFLAGS) -c $(KERNEL_FILES)
 
-# $(IMAGE): $(BOOT_OBJ) $(KERNEL_OBJS)
-# # 	@$(CC) -m32 -T linker.ld -o $(IMAGE) -ffreestanding -O2 -nostdlib $(BOOT_OBJ) $(KERNEL_OBJS)
-# 	gcc -m32 -T linker.ld -o isodir/boot/kfs -ffreestanding -O2 -nostdlib boot.o $(KERNEL_OBJS)
-# # 	cp kfs isodir/boot/kfs
-
 $(IMAGE): $(BOOT_OBJ) $(KERNEL_OBJS)
-# 	# On force l'ordre : boot.o EN PREMIER
 	@$(CC) -m32 -T linker.ld -o isodir/boot/kfs -ffreestanding -O2 -nostdlib boot.o $(KERNEL_OBJS)
 
 link: $(IMAGE)
 
 run:
-	docker run --rm -v $(shell pwd):/root/env myos-builder bash -c "make link && grub-mkrescue -o kfs.iso isodir"
+	docker run --rm -v $(shell pwd):/root/env kfs-builder bash -c "make link && grub-mkrescue -o kfs.iso isodir"
 
 fclean:
 	@rm -f $(BOOT_OBJ)
@@ -41,4 +34,6 @@ fclean:
 	@rm -f $(IMAGE)
 	@rm -f isodir/boot/kfs
 	@rm -f kfs.iso
-	@echo FCleaned 
+	@echo FCleaned
+
+re: fclean link run
