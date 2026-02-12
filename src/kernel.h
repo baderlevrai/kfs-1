@@ -4,8 +4,6 @@
 #error "This tutorial needs to be compiled with a ix86-elf compiler"
 #endif
 
-#include "libc/libc.h"
-
 /* Hardware text mode color constants. */
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
@@ -26,6 +24,10 @@ enum vga_color {
 	VGA_COLOR_WHITE = 15,
 };
 
+typedef unsigned char		uint8_t;
+typedef unsigned short int	uint16_t;
+typedef unsigned long		size_t;
+
 #define VGA_WIDTH	80
 #define VGA_HEIGHT	25
 #define VGA_MEMORY	0xB8000
@@ -33,5 +35,18 @@ enum vga_color {
 #define PORT_TEXT_CURSOR (char) 0x3D4
 #define PORT_TEXT_DATA (char) 0x3D5
 
-void terminal_initialize(void);
-void terminal_wstr(const char* data);
+void	terminal_initialize(void);
+void	terminal_wstr(const char* data);
+size_t	strlen(const char* str);
+
+inline void outb(uint16_t port, uint8_t val)
+{
+    asm volatile ("outb %b0, %w1" : : "a"(val), "Nd"(port) : "memory");
+}
+
+inline uint8_t inb(uint16_t port)
+{
+    uint8_t ret;
+    asm volatile ( "inb %w1, %b0" : "=a"(ret) : "Nd"(port) : "memory");
+    return ret;
+}

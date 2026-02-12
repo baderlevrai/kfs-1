@@ -1,4 +1,4 @@
-#include "libc.h"
+#include "kernel.h"
 
 size_t	strlen(const char* str)
 {
