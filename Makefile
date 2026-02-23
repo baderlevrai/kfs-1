@@ -8,37 +8,45 @@ BOOT_OBJ = boot.o
 
 BOOT_FILE = boot.s
 
-KERNEL_FILES = kernel_main.c
+OBJ_DIR = objs
 
-KERNEL_OBJS = $(KERNEL_FILES:.c=.o)
+KERNEL_FILES = kernel_main.c \
+				terminal.c \
+				strlen.c
+
+SRC_DIR = src/
+
+KERNEL_SRC = $(addprefix $(SRC_DIR), $(KERNEL_FILES))
+
+KERNEL_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(KERNEL_SRC))
 
 build: $(BOOT_OBJ) $(KERNEL_OBJS)
 
 $(BOOT_OBJ): $(BOOT_FILE)
 	@nasm -f elf32 boot.s -o boot.o
-# 	ld -m elf_i386 -o boot.bin --oformat binary -e init boot.o
 
-$(KERNEL_OBJS):
-	@$(CC) -m32 $(CFLAGS) -c $(KERNEL_FILES)
+# %.o: %.c
+# 	$(CC) -m32 $(CFLAGS) -c $< -o $@
+# 	mv $@ objs/$@
 
-# $(IMAGE): $(BOOT_OBJ) $(KERNEL_OBJS)
-# # 	@$(CC) -m32 -T linker.ld -o $(IMAGE) -ffreestanding -O2 -nostdlib $(BOOT_OBJ) $(KERNEL_OBJS)
-# 	gcc -m32 -T linker.ld -o isodir/boot/kfs -ffreestanding -O2 -nostdlib boot.o $(KERNEL_OBJS)
-# # 	cp kfs isodir/boot/kfs
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(IMAGE): $(BOOT_OBJ) $(KERNEL_OBJS)
-# 	# On force l'ordre : boot.o EN PREMIER
 	@$(CC) -m32 -T linker.ld -o isodir/boot/kfs -ffreestanding -O2 -nostdlib boot.o $(KERNEL_OBJS)
 
 link: $(IMAGE)
 
 run:
-	docker run --rm -v $(shell pwd):/root/env myos-builder bash -c "make link && grub-mkrescue -o kfs.iso isodir"
+	docker run --rm -v $(shell pwd):/root/env kfs-builder bash -c "make link && grub-mkrescue -o kfs.iso isodir"
 
 fclean:
-	@rm -f $(BOOT_OBJ)
-	@rm -f $(KERNEL_OBJS)
-	@rm -f $(IMAGE)
-	@rm -f isodir/boot/kfs
-	@rm -f kfs.iso
-	@echo FCleaned 
+# 	@rm -f $(BOOT_OBJ)
+# 	@rm -f $(KERNEL_OBJS)
+# 	@rm -f $(IMAGE)
+# 	@rm -f isodir/boot/kfs
+# 	@rm -f kfs.iso
+# 	@echo FCleaned
+
+re: fclean link run
