@@ -32,8 +32,10 @@ typedef unsigned long		size_t;
 #define VGA_HEIGHT	25
 #define VGA_MEMORY	0xB8000
 
-#define PORT_TEXT_CURSOR (char) 0x3D4
-#define PORT_TEXT_DATA (char) 0x3D5
+#define VGA_CTRL_REGISTER 0x3D4
+#define VGA_DATA_REGISTER 0x3D5
+#define CURSOR_END_INDEX  0x0B
+
 
 void	terminal_initialize(void);
 void	terminal_wstr(const char* data);

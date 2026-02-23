@@ -16,22 +16,23 @@ inline uint16_t	vga_entry(unsigned char uc, uint8_t color)
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
-void	enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
-	outb(0x3D4, 0x0A);
-	outb(0x3D5, (inb(0x3D5) & 0x0C0) | cursor_start);
+// void	enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
+// 	outb(VGA_CTRL_REGISTER, 0x0A);
+// 	outb(VGA_DATA_REGISTER, (inb(0x3D5) & 0x0C0) | cursor_start);
 
-	outb(0x3D4, 0x0B);
-	outb(0x3D5, (inb(0x3D5) & 0x0C0) | cursor_end);
-}
+// 	outb(VGA_CTRL_REGISTER, 0x0B);
+// 	outb(VGA_DATA_REGISTER, (inb(0x3D5) & 0x0C0) | cursor_end);
+// }
 
 void update_cursor(int x, int y)
 {
 	uint16_t pos = y * VGA_WIDTH + x;
 
-	outb(0x3D4, 0x0F);
-	outb(0x3D5, (uint8_t) (pos & 0xFF));
-	outb(0x3D4, 0x0E);
-	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+	outb(VGA_CTRL_REGISTER, 0x0F);
+	outb(VGA_DATA_REGISTER, (uint8_t) (pos & 0xFF));
+
+	outb(VGA_CTRL_REGISTER, 0x0E);
+	outb(VGA_DATA_REGISTER, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
 void terminal_initialize(void)
@@ -46,8 +47,6 @@ void terminal_initialize(void)
 			terminal_buffer[index] = vga_entry(' ', terminal_color);
 		}
 	}
-
-    // enable_cursor(150, 151);
 }
 
 void terminal_setcolor(uint8_t color)
