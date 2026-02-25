@@ -16,14 +16,6 @@ inline uint16_t	vga_entry(unsigned char uc, uint8_t color)
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
-// void	enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
-// 	outb(VGA_CTRL_REGISTER, 0x0A);
-// 	outb(VGA_DATA_REGISTER, (inb(0x3D5) & 0x0C0) | cursor_start);
-
-// 	outb(VGA_CTRL_REGISTER, 0x0B);
-// 	outb(VGA_DATA_REGISTER, (inb(0x3D5) & 0x0C0) | cursor_end);
-// }
-
 void update_cursor(int x, int y)
 {
 	uint16_t pos = y * VGA_WIDTH + x;
@@ -83,8 +75,14 @@ void terminal_write(const char* data, size_t size)
 		terminal_putchar(data[i]);
 }
 
+void terminal_wchar(char c)
+{
+	terminal_putchar(c);
+	update_cursor(terminal_column, terminal_row);
+}
+
 void terminal_wstr(const char* data)
 {
 	terminal_write(data, strlen(data));
-    update_cursor(terminal_column, terminal_row);
+	update_cursor(terminal_column, terminal_row);
 }
