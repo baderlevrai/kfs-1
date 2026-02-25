@@ -42,14 +42,14 @@ typedef unsigned long		size_t;
 
 #define KBD_ESC 27
 
-#define KBD_LSHIFT 0x81
-#define KBD_RSHIFT 0x82
-#define KBD_LCTRL 0x83
-#define KBD_LALT 0x84
+#define KBD_LSHIFT 0x71
+#define KBD_RSHIFT 0x72
+#define KBD_LCTRL 0x73
+#define KBD_LALT 0x74
 
-#define KBD_CAPSLOCK 0x85
-#define KBD_NUMLOCK 0x86
-#define KBD_SCROLLLOCK 0x87
+#define KBD_CAPSLOCK 0x75
+#define KBD_NUMLOCK 0x76
+#define KBD_SCROLLLOCK 0x77
 
 #define KBD_F1 0x91
 #define KBD_F2 0x92
@@ -64,26 +64,29 @@ typedef unsigned long		size_t;
 #define KBD_F11 0x9B
 #define KBD_F12 0x9C
 
-#define KBD_KP_0 0x70
-#define KBD_KP_1 0x71
-#define KBD_KP_2 0x72
-#define KBD_KP_3 0x73
-#define KBD_KP_4 0x74
-#define KBD_KP_5 0x75
-#define KBD_KP_6 0x76
-#define KBD_KP_7 0x77
-#define KBD_KP_8 0x78
-#define KBD_KP_9 0x79
-#define KBD_KP_DOT 0x7A
-#define KBD_KP_ENTER 0x7B
-#define KBD_KP_PLUS 0x7C
-#define KBD_KP_MINUS 0x7D
-#define KBD_KP_MULTIPLY 0x7E
+#define KBD_KP_0 0x80
+#define KBD_KP_1 0x81
+#define KBD_KP_2 0x82
+#define KBD_KP_3 0x83
+#define KBD_KP_4 0x84
+#define KBD_KP_5 0x85
+#define KBD_KP_6 0x86
+#define KBD_KP_7 0x87
+#define KBD_KP_8 0x88
+#define KBD_KP_9 0x89
+#define KBD_KP_DOT 0x8A
+// #define KBD_KP_ENTER 0x0B
+#define KBD_KP_PLUS 0x8C
+#define KBD_KP_MINUS 0x8D
+#define KBD_KP_MULTIPLY 0x8E
 
 void	terminal_initialize(void);
 void	terminal_wstr(const char* data);
 void	terminal_wchar(char c);
 size_t	strlen(const char* str);
+
+void	kbd_handler(void);
+void	kbd_init(void);
 
 inline void outb(uint16_t port, uint8_t val)
 {
