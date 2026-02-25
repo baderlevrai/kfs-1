@@ -40,46 +40,6 @@ typedef unsigned long		size_t;
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
 
-#define KBD_ESC 27
-
-#define KBD_LSHIFT 0x71
-#define KBD_RSHIFT 0x72
-#define KBD_LCTRL 0x73
-#define KBD_LALT 0x74
-
-#define KBD_CAPSLOCK 0x75
-#define KBD_NUMLOCK 0x76
-#define KBD_SCROLLLOCK 0x77
-
-#define KBD_F1 0x91
-#define KBD_F2 0x92
-#define KBD_F3 0x93
-#define KBD_F4 0x94
-#define KBD_F5 0x95
-#define KBD_F6 0x96
-#define KBD_F7 0x97
-#define KBD_F8 0x98
-#define KBD_F9 0x99
-#define KBD_F10 0x9A
-#define KBD_F11 0x9B
-#define KBD_F12 0x9C
-
-#define KBD_KP_0 0x80
-#define KBD_KP_1 0x81
-#define KBD_KP_2 0x82
-#define KBD_KP_3 0x83
-#define KBD_KP_4 0x84
-#define KBD_KP_5 0x85
-#define KBD_KP_6 0x86
-#define KBD_KP_7 0x87
-#define KBD_KP_8 0x88
-#define KBD_KP_9 0x89
-#define KBD_KP_DOT 0x8A
-// #define KBD_KP_ENTER 0x0B
-#define KBD_KP_PLUS 0x8C
-#define KBD_KP_MINUS 0x8D
-#define KBD_KP_MULTIPLY 0x8E
-
 void	terminal_initialize(void);
 void	terminal_wstr(const char* data);
 void	terminal_wchar(char c);
