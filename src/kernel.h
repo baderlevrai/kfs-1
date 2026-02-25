@@ -41,6 +41,7 @@ typedef unsigned long		size_t;
 #define KEYBOARD_STATUS_PORT 0x64
 
 #define KBD_ESC 27
+
 #define KBD_LSHIFT 0x81
 #define KBD_RSHIFT 0x82
 #define KBD_LCTRL 0x83
@@ -78,7 +79,6 @@ typedef unsigned long		size_t;
 #define KBD_KP_PLUS 0x7C
 #define KBD_KP_MINUS 0x7D
 #define KBD_KP_MULTIPLY 0x7E
-#define KBD_KP_DIVIDE 0x7F
 
 void	terminal_initialize(void);
 void	terminal_wstr(const char* data);

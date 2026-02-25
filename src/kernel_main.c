@@ -17,7 +17,7 @@ uint8_t	read_keyboard(void) {
 
 // Table de correspondance pour le Set 1
 unsigned char kbd_map[128] = {
-	0, 27, '1', '2','3', '4','5', '6','7', '8',
+	0, KBD_ESC, '1', '2','3', '4','5', '6','7', '8',
 	'9', '0', '-', '=', '\b', '\t', 'q', 'w', 'e', 'r',
 	't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', KBD_LCTRL,
 	'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
@@ -32,6 +32,86 @@ unsigned char kbd_map[128] = {
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
+typedef struct {
+	int	alt;
+	int	ctrl;
+	int rshift;
+	int lshift;
+	int capslock;
+	int numlock;
+} kbd_opt_t;
+
+kbd_opt_t options;
+
+void	kbd_init(void) {
+	options.alt = 0;
+	options.ctrl = 0;
+	options.rshift = 0;
+	options.lshift = 0;
+	options.capslock = 0;
+	options.numlock = 0;
+}
+
+void	kbd_handler(void) {
+	kbd_opt_t	options;
+
+	while (1) {
+		uint8_t scancode = read_keyboard();
+
+		if (scancode == 0xE0 || scancode == 0xE1) {
+			uint8_t part2 = read_keyboard();
+
+			if (part2 == 0xF0) {
+				read_keyboard();
+			}
+
+			continue;
+		}
+
+		if (scancode & 0x80) { //Released
+
+			uint8_t key_release = scancode & 0x7F;
+			unsigned char key = kbd_map[key_release];
+
+			if (key == KBD_LALT) {
+				options.alt = 0;
+			} else if (key == KBD_LCTRL) {
+				options.ctrl = 0;
+			} else if (key == KBD_LSHIFT) {
+				options.lshift = 0;
+			} else if (key == KBD_RSHIFT) {
+				options.rshift = 0;
+			}
+
+		} else { //Pressed
+			unsigned char key = kbd_map[scancode];
+
+			if (key == KBD_LALT) {
+				options.alt = 1;
+				terminal_wstr("alt pressed\n");
+			} else if (key == KBD_LCTRL) {
+				options.ctrl = 1;
+				terminal_wstr("Left Control pressed\n");
+			} else if (key == KBD_CAPSLOCK) {
+				options.capslock = !options.capslock;
+				terminal_wstr("Capslock pressed\n");
+			} else if (key == KBD_NUMLOCK) {
+				options.numlock = !options.numlock;
+				terminal_wstr("Numlock pressed\n");
+			} else if (key == KBD_LSHIFT) {
+				options.lshift = 1;
+				terminal_wstr("Left Shift pressed\n");
+			} else if (key == KBD_RSHIFT) {
+				options.rshift = 1;
+				terminal_wstr("Right Shift pressed\n");
+			} else {
+				terminal_wchar(key);
+			}
+		}
+	}
+}
+
+
 void kernel_main(void)
 {
 	terminal_initialize();
@@ -39,28 +119,10 @@ void kernel_main(void)
 	terminal_wstr("Hello, kernel World!\n");
 	terminal_wstr("This is a simple kernel written in C.\n");
 
-	// hello();
+	hello();
 
-	while (1)
-	{
-		uint8_t scancode = read_keyboard();
+	kbd_init();
 
-		//Extended keys
-		if (scancode == 0xE0 || scancode == 0xE1) {
-			continue;
-		}
-
-		if (scancode & 0x80) {
-			uint8_t key_release = scancode & 0x7F;
-			terminal_wstr("Key released: ");
-			terminal_wchar(kbd_map[key_release]);
-			terminal_wchar('\n');
-		} else {
-			terminal_wstr("Key pressed: ");
-			terminal_wchar(kbd_map[scancode]);
-			terminal_wchar('\n');
-		}
-
-	}
+	kbd_handler();
 
 }
