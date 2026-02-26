@@ -7,6 +7,7 @@ uint16_t*	terminal_buffer = (uint16_t*)VGA_MEMORY;
 
 uint8_t		curr_tty = 0;
 uint16_t	ttys[2][VGA_HEIGHT * VGA_WIDTH];
+size_t		ttys_cursor[2][2] = { 0 };
 
 inline uint8_t	vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
@@ -94,6 +95,8 @@ void terminal_wstr(const char* data)
 
 void change_tty(uint8_t tty)
 {
+	ttys_cursor[curr_tty][0] = terminal_row;
+	ttys_cursor[curr_tty][1] = terminal_column;
 	curr_tty = tty;
 	terminal_row = 0;
 	terminal_column = 0;
@@ -105,4 +108,7 @@ void change_tty(uint8_t tty)
 			terminal_buffer[index] = ttys[tty][index];
 		}
 	}
+	terminal_row = ttys_cursor[curr_tty][0];
+	terminal_column = ttys_cursor[curr_tty][1];
+	update_cursor(terminal_column, terminal_row);
 }
