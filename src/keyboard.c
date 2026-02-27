@@ -157,6 +157,9 @@ void	kbd_handler(void) {
             } else {
                 terminal_wchar(key);
             }
+
+			if (key == KBD_F1 || key == KBD_F2)
+				change_tty((key == KBD_F2));
 		}
 	}
 }

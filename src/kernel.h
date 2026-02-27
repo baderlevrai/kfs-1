@@ -43,6 +43,7 @@ typedef unsigned long		size_t;
 void	terminal_initialize(void);
 void	terminal_wstr(const char* data);
 void	terminal_wchar(char c);
+void	change_tty(uint8_t tty);
 size_t	strlen(const char* str);
 
 void	kbd_handler(void);
