@@ -18,6 +18,7 @@ void kernel_main(void)
 
 	hello();
 
+  printk("Printk example %d", 42);
 	kbd_init();
 
 	kbd_handler();

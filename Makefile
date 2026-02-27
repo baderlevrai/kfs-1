@@ -16,7 +16,8 @@ OBJ_DIR = objs
 KERNEL_FILES = kernel_main.c \
 				terminal.c \
 				strlen.c \
-				keyboard.c
+				keyboard.c \
+				printk.c
 
 SRC_DIR = src/
 
