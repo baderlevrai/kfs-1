@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KERNEL_H
+#define KERNEL_H
 
 #if !defined(__i386__)
 #error "This tutorial needs to be compiled with a ix86-elf compiler"
@@ -60,3 +61,5 @@ inline uint8_t inb(uint16_t port)
 	asm volatile ( "inb %w1, %b0" : "=a"(ret) : "Nd"(port) : "memory");
 	return ret;
 }
+
+#endif

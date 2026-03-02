@@ -1,8 +1,11 @@
 CC = gcc
 
-IMAGE = kfs
+IMAGE_DIR = isodir
+IMAGE = $(IMAGE_DIR)/boot/kfs
 
-CFLAGS = -Wall -Wextra -Werror -m32 -ffreestanding -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs
+ISO = kfs.iso
+
+CFLAGS = -Wall -Wextra -Werror -m32 -ffreestanding -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -O2 -Isrc 
 
 BOOT_OBJ = boot.o
 
@@ -19,35 +22,42 @@ SRC_DIR = src/
 
 KERNEL_SRC = $(addprefix $(SRC_DIR), $(KERNEL_FILES))
 
-KERNEL_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(KERNEL_SRC))
+KERNEL_OBJS = $(KERNEL_SRC:.c=.o)
+
+all: $(ISO) 
+
+$(ISO): $(IMAGE)
+	@make build-iso --no-print-directory
 
 build: $(BOOT_OBJ) $(KERNEL_OBJS)
+	echo $(KERNEL_OBJS)
 
 $(BOOT_OBJ): $(BOOT_FILE)
-	@nasm -f elf32 boot.s -o boot.o
+	@docker run --rm -v $(shell pwd):/root/env kfs-builder bash -c "nasm -f elf32 $(BOOT_FILE) -o $(BOOT_OBJ)"
+	@echo Boot file created.
 
-# %.o: %.c
-# 	$(CC) -m32 $(CFLAGS) -c $< -o $@
-# 	mv $@ objs/$@
-
-$(OBJ_DIR)/%.o: %.c
+%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(IMAGE): $(BOOT_OBJ) $(KERNEL_OBJS)
-	@$(CC) -m32 -T linker.ld -o isodir/boot/kfs -ffreestanding -O2 -nostdlib boot.o $(KERNEL_OBJS)
+	@$(CC) $(CFLAGS) -T linker.ld -o $(IMAGE) -ffreestanding -O2 -nostdlib $(BOOT_OBJ) $(KERNEL_OBJS)
+	@echo Image created.
 
 link: $(IMAGE)
 
-run:
-	docker run --rm -v $(shell pwd):/root/env kfs-builder bash -c "make link && grub-mkrescue -o kfs.iso isodir"
+build-iso: $(IMAGE)
+	@docker run --rm -v $(shell pwd):/root/env kfs-builder bash -c "grub-mkrescue -o $(ISO) $(IMAGE_DIR)"
+	@echo Iso created.
+
+run: $(ISO)
+	@qemu-system-x86_64 $(ISO)
 
 fclean:
-# 	@rm -f $(BOOT_OBJ)
-# 	@rm -f $(KERNEL_OBJS)
-# 	@rm -f $(IMAGE)
-# 	@rm -f isodir/boot/kfs
-# 	@rm -f kfs.iso
-# 	@echo FCleaned
+	@rm -f $(BOOT_OBJ)
+	@rm -f $(KERNEL_OBJS)
+	@rm -f $(IMAGE)
+	@rm -f $(ISO)
+	@echo FCleaned
 
 re: fclean link run
