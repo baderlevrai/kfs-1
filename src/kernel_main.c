@@ -18,7 +18,9 @@ void kernel_main(void)
 
 	hello();
 
-	kbd_init();
+  printk("Printk example %d\n", 42);
+  printk("Screen address: %p", VGA_MEMORY);
+  kbd_init();
 
 	kbd_handler();
 
