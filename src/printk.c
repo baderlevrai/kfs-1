@@ -11,15 +11,13 @@ void  print_char(char c, size_t *len)
 void print_str(char *str, size_t *len)
 {
   if (!str)
-    return (terminal_wstr("(null)", len));
+    return (print_str("(null)", len));
   *len = *len + strlen(str);
   terminal_wstr(str);
 }
 
 void print_nb(int nb, size_t *len)
 {
-	char	temp;
-
 	if (nb < 0)
 	{
 		terminal_wchar('-');
@@ -45,12 +43,12 @@ void  print_addr(void *ptr, size_t *len)
 {
   char *base = "0123456789ABCDEF";
 
-  if (ptr > 16)
+  if ((uintptr_t)ptr > 16)
   {
-    print_addr((ptr - (ptr % 16)) / 16, len);
-    ptr = (ptr % 16);
+    print_addr((void*)(((uintptr_t)ptr - ((uintptr_t)ptr % 16)) / 16), len);
+    ptr = (void*)((uintptr_t)ptr % 16);
   }
-  print_char(base[ptr], len);
+  print_char(base[(uintptr_t)ptr], len);
 }
 
 uint8_t  handle_format(char c, size_t *len, va_list args)
