@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include <stdarg.h>
+#include <stdint.h>
 
 void  print_char(char c, size_t *len)
 {
@@ -9,6 +10,8 @@ void  print_char(char c, size_t *len)
 
 void print_str(char *str, size_t *len)
 {
+  if (!str)
+    return (terminal_wstr("(null)", len));
   *len = *len + strlen(str);
   terminal_wstr(str);
 }
@@ -38,6 +41,18 @@ void print_nb(int nb, size_t *len)
   (*len)++;
 }
 
+void  print_addr(void *ptr, size_t *len)
+{
+  char *base = "0123456789ABCDEF";
+
+  if (ptr > 16)
+  {
+    print_addr((ptr - (ptr % 16)) / 16, len);
+    ptr = (ptr % 16);
+  }
+  print_char(base[ptr], len);
+}
+
 uint8_t  handle_format(char c, size_t *len, va_list args)
 {
   size_t old_len = *len;
@@ -48,6 +63,8 @@ uint8_t  handle_format(char c, size_t *len, va_list args)
     print_str(va_arg(args, char *), len);
   if (c == 'd' || c == 'i')
     print_nb(va_arg(args, int), len);
+  if (c == 'p')
+    print_addr(va_arg(args, void *), len);
   if (old_len == *len)
     return (0);
   return (1);
